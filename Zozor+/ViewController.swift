@@ -15,37 +15,47 @@ class ViewController: UIViewController {
     // MARK: - Outlets
 
     @IBOutlet weak var textView: UITextView!
-    @IBOutlet var numberButtons: [UIButton]!
 
     // MARK: - Action
 
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        for (inc, numberButton) in numberButtons.enumerated() where sender == numberButton {
-            calculator.addNumber(newNumber: inc)
+        calculator.addNumber(newNumber: sender.tag)
             updateDisplay()
-        }
     }
 
-    @IBAction func plus() {
-        if calculator.addOperator(operatorToAdd: "+") {
-            updateDisplay()
+    @IBAction func pushOperator(sender: UIButton) {
+        var operatorToAdd: String
+        if sender.tag == 0 {
+            operatorToAdd = "+"
+        } else {
+            operatorToAdd = "-"
         }
-    }
-
-    @IBAction func minus() {
-        if calculator.addOperator(operatorToAdd: "-") {
+        if calculator.addOperator(operatorToAdd: operatorToAdd) {
             updateDisplay()
         }
     }
 
     @IBAction func equal() {
-        let resultCalculation = calculator.calculateTotal()
-        if resultCalculation != "" {
-            textView.text = (textView.text + "=\(resultCalculation)")
+        switch calculator.isExpressionCorrect {
+        case .correct:
+            let resultCalculation = calculator.calculateTotal()
+            if resultCalculation != "" {
+                textView.text = (textView.text + "=\(resultCalculation)")
+            }
+        case .incorrect:
+            showAlert(message: "Entrez une expression correcte!", title: "Zéro")
+        case .newCalculNeeded:
+            showAlert(message: "Démarrez un nouveau calcul", title: "Zéro")
         }
     }
 
     // MARK: - Methods
+
+    func showAlert(message: String, title: String) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        self.present(alertVC, animated: true, completion: nil)
+    }
 
     func updateDisplay() {
         textView.text = calculator.getArrayCurrentState()
