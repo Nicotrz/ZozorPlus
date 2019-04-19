@@ -32,6 +32,8 @@ class ViewController: UIViewController {
         }
         if calculator.addOperator(operatorToAdd: operatorToAdd) {
             updateDisplay()
+        } else {
+            showAlert(message: "Expression incorrecte!", title: "Erreur")
         }
     }
 
