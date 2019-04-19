@@ -9,20 +9,27 @@
 import UIKit
 
 class ViewController: UIViewController {
-    // MARK: - Properties
+
+    // MARK: - Model
     let calculator  = Calculator()
 
-    // MARK: - Outlets
+    // MARK: - Outlet
 
     @IBOutlet weak var textView: UITextView!
 
-    // MARK: - Action
+    // MARK: - Actions
 
+    // Called when one of the number is tapped.
+    // Take the tag to know witch number
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         calculator.addNumber(newNumber: sender.tag)
             updateDisplay()
     }
 
+    // Called when one the user tap an operator
+    // Tag 0 is +
+    // Tag 1 is -
+    // If addOperator sens back false, the operation cannot be done
     @IBAction func pushOperator(sender: UIButton) {
         var operatorToAdd: String
         if sender.tag == 0 {
@@ -37,13 +44,15 @@ class ViewController: UIViewController {
         }
     }
 
+    // Called when the user tapp equal
+    // First we check if the expression is valid
+    // If it is, we calculate the result and put it on textView
+    // Else, we display an error message
     @IBAction func equal() {
         switch calculator.isExpressionCorrect {
         case .correct:
             let resultCalculation = calculator.calculateTotal()
-            if resultCalculation != "" {
                 textView.text = (textView.text + "=\(resultCalculation)")
-            }
         case .incorrect:
             showAlert(message: "Entrez une expression correcte!", title: "Zéro")
         case .newCalculNeeded:
@@ -53,14 +62,16 @@ class ViewController: UIViewController {
 
     // MARK: - Methods
 
+    // Function to display a message alert with the title title
     func showAlert(message: String, title: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
     }
 
+    // Function to refresh the display depending on the current state of the model
     func updateDisplay() {
-        textView.text = calculator.getArrayCurrentState()
+        textView.text = calculator.getCurrentState()
     }
 
 }
