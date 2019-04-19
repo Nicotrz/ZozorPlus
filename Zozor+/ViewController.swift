@@ -12,7 +12,6 @@ class ViewController: UIViewController {
     // MARK: - Properties
     var stringNumbers: [String] = [String()]
     var operators: [String] = ["+"]
-    var index = 0
     var isExpressionCorrect: Bool {
         if let stringNumber = stringNumbers.last {
             if stringNumber.isEmpty {
@@ -127,6 +126,5 @@ class ViewController: UIViewController {
     func clear() {
         stringNumbers = [String()]
         operators = ["+"]
-        index = 0
     }
 }
