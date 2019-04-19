@@ -10,40 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     // MARK: - Properties
-    var stringNumbers: [String] = [String()]
-    var operators: [String] = ["+"]
-    var isExpressionCorrect: Bool {
-        if let stringNumber = stringNumbers.last {
-            if stringNumber.isEmpty {
-                if stringNumbers.count == 1 {
-                    let alertVC = UIAlertController(
-                        title: "Zéro!", message: "Démarrez un nouveau calcul !", preferredStyle: .alert)
-                    alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-                    self.present(alertVC, animated: true, completion: nil)
-                } else {
-                    let alertVC = UIAlertController(
-                        title: "Zéro!", message: "Entrez une expression correcte !", preferredStyle: .alert)
-                    alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-                    self.present(alertVC, animated: true, completion: nil)
-                }
-                return false
-            }
-        }
-        return true
-    }
-
-    var canAddOperator: Bool {
-        if let stringNumber = stringNumbers.last {
-            if stringNumber.isEmpty {
-                let alertVC = UIAlertController(
-                    title: "Zéro!", message: "Expression incorrecte !", preferredStyle: .alert)
-                alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-                self.present(alertVC, animated: true, completion: nil)
-                return false
-            }
-        }
-        return true
-    }
+    let calculator  = Calculator()
 
     // MARK: - Outlets
 
@@ -54,77 +21,34 @@ class ViewController: UIViewController {
 
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         for (inc, numberButton) in numberButtons.enumerated() where sender == numberButton {
-                addNewNumber(inc)
+            calculator.addNumber(newNumber: inc)
+            updateDisplay()
         }
     }
 
     @IBAction func plus() {
-        if canAddOperator {
-        	operators.append("+")
-        	stringNumbers.append("")
+        if calculator.addOperator(operatorToAdd: "+") {
             updateDisplay()
         }
     }
 
     @IBAction func minus() {
-        if canAddOperator {
-            operators.append("-")
-            stringNumbers.append("")
+        if calculator.addOperator(operatorToAdd: "-") {
             updateDisplay()
         }
     }
 
     @IBAction func equal() {
-        calculateTotal()
+        let resultCalculation = calculator.calculateTotal()
+        if resultCalculation != "" {
+            textView.text = (textView.text + "=\(resultCalculation)")
+        }
     }
 
     // MARK: - Methods
 
-    func addNewNumber(_ newNumber: Int) {
-        if let stringNumber = stringNumbers.last {
-            var stringNumberMutable = stringNumber
-            stringNumberMutable += "\(newNumber)"
-            stringNumbers[stringNumbers.count-1] = stringNumberMutable
-        }
-        updateDisplay()
-    }
-
-    func calculateTotal() {
-        if !isExpressionCorrect {
-            return
-        }
-
-        var total = 0
-        for (inc, stringNumber) in stringNumbers.enumerated() {
-            if let number = Int(stringNumber) {
-                if operators[inc] == "+" {
-                    total += number
-                } else if operators[inc] == "-" {
-                    total -= number
-                }
-            }
-        }
-
-        textView.text = (textView.text + "=\(total)")
-
-        clear()
-    }
-
     func updateDisplay() {
-        var text = ""
-        for (inc, stringNumber) in stringNumbers.enumerated() {
-            // Add operator
-            if inc > 0 {
-                text += operators[inc]
-            }
-            // Add number
-            text += stringNumber
-        }
-        textView.text = text
+        textView.text = calculator.getArrayCurrentState()
     }
 
-    func clear() {
-        stringNumbers = [String()]
-        operators = ["+"]
-    }
 }
