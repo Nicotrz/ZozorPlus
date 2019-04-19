@@ -18,32 +18,6 @@ class CalculatorTest: XCTestCase {
         super.setUp()
     }
 
-    func testGivenTabsShouldExist() {
-        XCTAssertNotNil(calculator.operators)
-    }
-
-    func testWhenAddingNumberToStringNumbers_ArrayShouldFollow() {
-        calculator.addNumber(newNumber: "7")
-        XCTAssert(calculator.stringNumbers[0] == "7")
-        calculator.addNumber(newNumber: "8")
-        XCTAssert(calculator.stringNumbers[0] == "78")
-        let boolResult = calculator.addOperator(operatorToAdd: "-")
-        calculator.addNumber(newNumber: "9")
-        XCTAssert(calculator.stringNumbers[1] == "9")
-        XCTAssert(boolResult)
-    }
-
-    func testGivenStringNumberIsEmpty_CanAddOperatorShouldBeFalse() {
-        XCTAssertFalse(calculator.canAddOperator)
-    }
-
-    func testGivenAddOperatorsAddAnOperatorWhenGiven() {
-        calculator.addNumber(newNumber: "8")
-        let boolResult = calculator.addOperator(operatorToAdd: "-")
-        XCTAssert(calculator.operators.count == 2)
-        XCTAssert(boolResult)
-    }
-
     func testGivenLastNumberOfArrayIsEmptyWhenAddingOperator_addOperatorShouldReturnFalse() {
         let boolResult = calculator.addOperator(operatorToAdd: "-")
         XCTAssertFalse(boolResult)
@@ -54,44 +28,33 @@ class CalculatorTest: XCTestCase {
     }
 
     func testGivenNumberAndOperator_ValidityExpressionShouldBeIncorrect() {
-        calculator.addNumber(newNumber: "9")
+        calculator.addNumber(newNumber: 9)
         _ = calculator.addOperator(operatorToAdd: "+")
         XCTAssertEqual(calculator.isExpressionCorrect, .incorrect)
     }
 
-    func testGivenCorrectExpression_ValidityExpressionShouldBeCorrect() {
-        calculator.addNumber(newNumber: "99")
-        _ = calculator.addOperator(operatorToAdd: "-")
-        calculator.addNumber(newNumber: "87")
-        XCTAssertEqual(calculator.isExpressionCorrect, .correct)
-    }
-
-    func testGivenCorrectExpression_WhenCallingClear_ArrayShouldBeReinitialised() {
-        calculator.addNumber(newNumber: "9")
-        _ = calculator.addOperator(operatorToAdd: "-")
-        calculator.addNumber(newNumber: "9")
-        calculator.clear()
-        XCTAssertEqual(calculator.operators, ["+"])
-        XCTAssertEqual(calculator.stringNumbers, [""])
-    }
-
-    func testGivenExpressionIsIncorrect_WhenCallingCalculateResult_StringResultShouldBeEmpty() {
-        calculator.addNumber(newNumber: "9")
-        _ = calculator.addOperator(operatorToAdd: "-")
-        let expressionResult = calculator.calculateTotal()
-        XCTAssertEqual(expressionResult, "")
-    }
-
-    func testGivenExpression_WhenCallingCalculateResult_CheckResultValidity() {
-        calculator.addNumber(newNumber: "9")
+    func testGivenExpression_WhenCallingCalculateResult_CheckResultValidityAndCurrentStateMustBeCleaned() {
+        // Testing 9 + 56. Result Should be 65
+        calculator.addNumber(newNumber: 9)
         _ = calculator.addOperator(operatorToAdd: "+")
-        calculator.addNumber(newNumber: "56")
+        calculator.addNumber(newNumber: 5)
+        calculator.addNumber(newNumber: 6)
+        XCTAssertEqual(calculator.isExpressionCorrect, .correct)
         var expressionResult = calculator.calculateTotal()
         XCTAssertEqual(expressionResult, "65" )
-        calculator.addNumber(newNumber: "7")
+
+        // Testing 7 - 1 + 5. Result Should be 11
+        calculator.addNumber(newNumber: 7)
         _ = calculator.addOperator(operatorToAdd: "-")
-        calculator.addNumber(newNumber: "1")
+        calculator.addNumber(newNumber: 1)
+        XCTAssertEqual(calculator.isExpressionCorrect, .correct)
+        _ = calculator.addOperator(operatorToAdd: "+")
+        calculator.addNumber(newNumber: 5)
+        // Testing the current State for display
+        XCTAssertEqual(calculator.getCurrentState(), "7-1+5")
         expressionResult = calculator.calculateTotal()
-        XCTAssertEqual(expressionResult, "6")
+        XCTAssertEqual(expressionResult, "11")
+        // Testing the current State for display
+        XCTAssertEqual(calculator.getCurrentState(), "")
     }
 }
