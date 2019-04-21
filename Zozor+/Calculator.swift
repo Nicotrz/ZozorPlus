@@ -17,6 +17,7 @@ class Calculator {
         case incorrect
     }
 
+    var firstCalcul = true
     // MARK: Private Properties
 
     // StringNumbers contain the numbers to calculate
@@ -33,6 +34,8 @@ class Calculator {
         }
         return true
     }
+
+    private var lastResult: Float = 0
 
     // MARK: Public properties
 
@@ -53,10 +56,6 @@ class Calculator {
     // MARK: Private Methods
 
     // This function clear the two arrays
-    private func clear() {
-        stringNumbers = [String()]
-        operators = ["+"]
-    }
 
     private func calculateMultiplicationDivision() -> [[String]] {
         var tempNumbersArray = stringNumbers
@@ -64,6 +63,7 @@ class Calculator {
 
         while priorPresence(operatorArray: tempOperatorsArray) {
             for (inc, operatorString) in tempOperatorsArray.enumerated() {
+                if operatorString == "*" || operatorString == "/" {
                 if let firstNumber = Float(tempNumbersArray[inc-1]) {
                     if let secondNumber = Float(tempNumbersArray[inc]) {
                         if operatorString == "*" {
@@ -77,6 +77,7 @@ class Calculator {
                 break
                 }
             }
+            }
         }
         return[tempNumbersArray, tempOperatorsArray]
     }
@@ -88,7 +89,20 @@ class Calculator {
         return false
     }
 
+    private func convertToString(toConvert: Float) -> String {
+        if toConvert.truncatingRemainder(dividingBy: 1.0 ) == 0 {
+            let int = Int(toConvert)
+            return ("\(int)")
+        }
+        return ("\(toConvert)")
+    }
+
     // MARK: Public Methods
+
+    func clear() {
+        stringNumbers = [String()]
+        operators = ["+"]
+    }
 
     // This function add an operator to the array and send true if success - false if not (cannot addOperator)
     func addOperator(operatorToAdd: String) -> Bool {
@@ -96,6 +110,13 @@ class Calculator {
             operators.append(operatorToAdd)
             stringNumbers.append("")
             return true
+        } else {
+            if stringNumbers[0].isEmpty && !firstCalcul {
+                stringNumbers[0] = (convertToString(toConvert: lastResult))
+                operators.append(operatorToAdd)
+                stringNumbers.append("")
+                return true
+            }
         }
         return false
     }
@@ -104,7 +125,11 @@ class Calculator {
     func addNumber(newNumber: Int) {
         if let stringNumber = stringNumbers.last {
             var stringNumberMutable = stringNumber
+            if newNumber == 10 {
+                stringNumberMutable += "."
+            } else {
             stringNumberMutable += "\(newNumber)"
+            }
             stringNumbers[stringNumbers.count-1] = stringNumberMutable
         }
 
@@ -124,11 +149,9 @@ class Calculator {
             }
         }
         clear()
-            if total.truncatingRemainder(dividingBy: 1.0 ) == 0 {
-                let intTotal = Int(total)
-                return ("\(intTotal)")
-            }
-        return ("\(total)")
+        lastResult = total
+        firstCalcul = false
+        return convertToString(toConvert: total)
     }
 
     // This function send the current state of the arrays ( operation ) and send it back as a String

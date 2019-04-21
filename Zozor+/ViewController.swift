@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextViewDelegate {
 
     // MARK: - Model
     let calculator  = Calculator()
@@ -24,6 +24,11 @@ class ViewController: UIViewController {
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         calculator.addNumber(newNumber: sender.tag)
             updateDisplay()
+    }
+
+    @IBAction func tappedClearButton(_ sender: Any) {
+        calculator.clear()
+        textView.text = "0"
     }
 
     // Called when one the user tap an operator
@@ -44,7 +49,7 @@ class ViewController: UIViewController {
         if calculator.addOperator(operatorToAdd: operatorToAdd) {
             updateDisplay()
         } else {
-            showAlert(message: "Expression incorrecte!", title: "Erreur")
+            showAlert(message: "SYNTAX ERROR!")
         }
     }
 
@@ -58,19 +63,24 @@ class ViewController: UIViewController {
             let resultCalculation = calculator.calculateTotal()
                 textView.text = (textView.text + "=\(resultCalculation)")
         case .incorrect:
-            showAlert(message: "Entrez une expression correcte!", title: "Zéro")
+            showAlert(message: "SYNTAX ERROR!")
         case .newCalculNeeded:
-            showAlert(message: "Démarrez un nouveau calcul", title: "Zéro")
+            showAlert(message: "SYNTAX ERROR!")
         }
     }
 
     // MARK: - Methods
 
     // Function to display a message alert with the title title
-    func showAlert(message: String, title: String) {
-        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-        self.present(alertVC, animated: true, completion: nil)
+    func showAlert(message: String) {
+        let tempText = textView.text
+        textView.text = "ERR\n\(message)"
+        DispatchQueue.global(qos: .background).async {
+            sleep(3)
+            DispatchQueue.main.async {
+                self.textView.text = tempText
+            }
+        }
     }
 
     // Function to refresh the display depending on the current state of the model
