@@ -57,4 +57,22 @@ class CalculatorTest: XCTestCase {
         // Testing the current State for display
         XCTAssertEqual(calculator.getCurrentState(), "")
     }
+
+    func testGivenFiveMultiplateFive_WhenCallingCalculateResult_ResultShouldBeTwentyFive() {
+        calculator.addNumber(newNumber: 5)
+        _ = calculator.addOperator(operatorToAdd: "*")
+        calculator.addNumber(newNumber: 5)
+        let expressionResult = calculator.calculateTotal()
+        XCTAssertEqual(expressionResult, "25")
+    }
+
+    func testGivenFivePlusTenMultiplateFive_WhenCallingCalculateResult_MultiplicationShouldBePrior() {
+        calculator.addNumber(newNumber: 5)
+        _ = calculator.addOperator(operatorToAdd: "+")
+        calculator.addNumber(newNumber: 10)
+        _ = calculator.addOperator(operatorToAdd: "*")
+        calculator.addNumber(newNumber: 5)
+        let expressionResult = calculator.calculateTotal()
+        XCTAssertEqual(expressionResult, "55")
+    }
 }

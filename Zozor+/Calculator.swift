@@ -58,6 +58,33 @@ class Calculator {
         operators = ["+"]
     }
 
+    private func calculateMultiplicationDivision() -> [[String]] {
+        var tempNumbersArray = stringNumbers
+        var tempOperatorsArray = operators
+
+        for (inc, operatorString) in tempOperatorsArray.enumerated() {
+            if operatorString == "*" {
+                if let firstNumber = Int(tempNumbersArray[inc-1]) {
+                    if let secondNumber = Int(tempNumbersArray[inc]) {
+                        tempNumbersArray[inc-1] = ("\(firstNumber * secondNumber)")
+                        tempNumbersArray.remove(at: inc)
+                        tempOperatorsArray.remove(at: inc)
+                    }
+                }
+            } else if operatorString == "/" {
+                if let firstNumber = Int(tempNumbersArray[inc-1]) {
+                    if let secondNumber = Int(tempNumbersArray[inc]) {
+                        tempNumbersArray[inc-1] = ("\(firstNumber / secondNumber)")
+                        tempNumbersArray.remove(at: inc)
+                        tempOperatorsArray.remove(at: inc)
+                    }
+                }
+
+            }
+        }
+        return[tempNumbersArray, tempOperatorsArray]
+    }
+
     // MARK: Public Methods
 
     // This function add an operator to the array and send true if success - false if not (cannot addOperator)
@@ -83,11 +110,12 @@ class Calculator {
     // This function calculate the result and send it back as a String
     func calculateTotal() -> String {
         var total = 0
-        for (inc, stringNumber) in stringNumbers.enumerated() {
+        let tempArray = calculateMultiplicationDivision()
+        for (inc, stringNumber) in tempArray[0].enumerated() {
             if let number = Int(stringNumber) {
-                if operators[inc] == "+" {
+                if tempArray[1][inc] == "+" {
                     total += number
-                } else if operators[inc] == "-" {
+                } else if tempArray[1][inc] == "-" {
                     total -= number
                 }
             }

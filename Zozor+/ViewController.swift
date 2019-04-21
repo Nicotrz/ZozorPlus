@@ -34,8 +34,12 @@ class ViewController: UIViewController {
         var operatorToAdd: String
         if sender.tag == 0 {
             operatorToAdd = "+"
-        } else {
+        } else if sender.tag == 1 {
             operatorToAdd = "-"
+        } else if sender.tag == 2 {
+            operatorToAdd = "*"
+        } else {
+            operatorToAdd = "/"
         }
         if calculator.addOperator(operatorToAdd: operatorToAdd) {
             updateDisplay()
