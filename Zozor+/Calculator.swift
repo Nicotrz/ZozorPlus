@@ -17,7 +17,6 @@ class Calculator {
         case incorrect
     }
 
-    var firstCalcul = true
     // MARK: Private Properties
 
     // StringNumbers contain the numbers to calculate
@@ -102,6 +101,7 @@ class Calculator {
     func clear() {
         stringNumbers = [String()]
         operators = ["+"]
+        lastResult = 0
     }
 
     // This function add an operator to the array and send true if success - false if not (cannot addOperator)
@@ -111,7 +111,7 @@ class Calculator {
             stringNumbers.append("")
             return true
         } else {
-            if stringNumbers[0].isEmpty && !firstCalcul {
+            if stringNumbers[0].isEmpty {
                 stringNumbers[0] = (convertToString(toConvert: lastResult))
                 operators.append(operatorToAdd)
                 stringNumbers.append("")
@@ -126,7 +126,11 @@ class Calculator {
         if let stringNumber = stringNumbers.last {
             var stringNumberMutable = stringNumber
             if newNumber == 10 {
-                stringNumberMutable += "."
+                if stringNumberMutable == "" {
+                       stringNumberMutable += "0."
+                } else {
+                    stringNumberMutable += "."
+                }
             } else {
             stringNumberMutable += "\(newNumber)"
             }
@@ -150,7 +154,6 @@ class Calculator {
         }
         clear()
         lastResult = total
-        firstCalcul = false
         return convertToString(toConvert: total)
     }
 
