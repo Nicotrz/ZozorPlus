@@ -62,27 +62,30 @@ class Calculator {
         var tempNumbersArray = stringNumbers
         var tempOperatorsArray = operators
 
-        for (inc, operatorString) in tempOperatorsArray.enumerated() {
-            if operatorString == "*" {
-                if let firstNumber = Int(tempNumbersArray[inc-1]) {
-                    if let secondNumber = Int(tempNumbersArray[inc]) {
-                        tempNumbersArray[inc-1] = ("\(firstNumber * secondNumber)")
-                        tempNumbersArray.remove(at: inc)
-                        tempOperatorsArray.remove(at: inc)
+        while priorPresence(operatorArray: tempOperatorsArray) {
+            for (inc, operatorString) in tempOperatorsArray.enumerated() {
+                if let firstNumber = Float(tempNumbersArray[inc-1]) {
+                    if let secondNumber = Float(tempNumbersArray[inc]) {
+                        if operatorString == "*" {
+                            tempNumbersArray[inc-1] = ("\(firstNumber * secondNumber)")
+                 } else if operatorString == "/" {
+                            tempNumbersArray[inc-1] = ("\(firstNumber / secondNumber)")
                     }
                 }
-            } else if operatorString == "/" {
-                if let firstNumber = Int(tempNumbersArray[inc-1]) {
-                    if let secondNumber = Int(tempNumbersArray[inc]) {
-                        tempNumbersArray[inc-1] = ("\(firstNumber / secondNumber)")
-                        tempNumbersArray.remove(at: inc)
-                        tempOperatorsArray.remove(at: inc)
-                    }
+                tempNumbersArray.remove(at: inc)
+                tempOperatorsArray.remove(at: inc)
+                break
                 }
-
             }
         }
         return[tempNumbersArray, tempOperatorsArray]
+    }
+
+    private func priorPresence(operatorArray: [String]) -> Bool {
+        for operatorString in operatorArray where operatorString == "*" || operatorString == "/" {
+            return true
+        }
+        return false
     }
 
     // MARK: Public Methods
@@ -109,10 +112,10 @@ class Calculator {
 
     // This function calculate the result and send it back as a String
     func calculateTotal() -> String {
-        var total = 0
+        var total: Float = 0
         let tempArray = calculateMultiplicationDivision()
         for (inc, stringNumber) in tempArray[0].enumerated() {
-            if let number = Int(stringNumber) {
+            if let number = Float(stringNumber) {
                 if tempArray[1][inc] == "+" {
                     total += number
                 } else if tempArray[1][inc] == "-" {
@@ -121,6 +124,10 @@ class Calculator {
             }
         }
         clear()
+            if total.truncatingRemainder(dividingBy: 1.0 ) == 0 {
+                let intTotal = Int(total)
+                return ("\(intTotal)")
+            }
         return ("\(total)")
     }
 
