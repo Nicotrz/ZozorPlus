@@ -10,13 +10,6 @@ import Foundation
 
 class Calculator {
 
-    // MARK: Type
-    enum ExpressionValidity {
-        case correct
-        case newCalculNeeded
-        case incorrect
-    }
-
     // MARK: Private Properties
 
     // StringNumbers contain the numbers to calculate
@@ -34,53 +27,60 @@ class Calculator {
         return true
     }
 
+    // This variable contain the result of the last operation
     private var lastResult: Float = 0
 
     // MARK: Public properties
 
     // isExpressionCorrect contain an ExpressionValidity to check if it is safe to calculate the result
-    var isExpressionCorrect: ExpressionValidity {
+    var isExpressionCorrect: Bool {
         if let stringNumber = stringNumbers.last {
             if stringNumber.isEmpty {
-                if stringNumbers.count == 1 {
-                    return .newCalculNeeded
-                } else {
-                    return .incorrect
-                }
+                return false
             }
         }
-        return .correct
+        return true
     }
 
     // MARK: Private Methods
 
-    // This function clear the two arrays
+    // This function calculate the Multiplication / Division operations
+    // and send it back as an array containing two String arrays
 
     private func calculateMultiplicationDivision() -> [[String]] {
+        // Array containing the result array of numbers only with + and - operations
         var tempNumbersArray = stringNumbers
+        // Array containing the result array of operations only with + and -
         var tempOperatorsArray = operators
 
+        // While there are * or / , we need to loop this function
         while priorPresence(operatorArray: tempOperatorsArray) {
+            // For all operators in the operatorArray, we check if we have a * or a /
             for (inc, operatorString) in tempOperatorsArray.enumerated() {
                 if operatorString == "*" || operatorString == "/" {
-                if let firstNumber = Float(tempNumbersArray[inc-1]) {
-                    if let secondNumber = Float(tempNumbersArray[inc]) {
-                        if operatorString == "*" {
-                            tempNumbersArray[inc-1] = ("\(firstNumber * secondNumber)")
-                 } else if operatorString == "/" {
-                            tempNumbersArray[inc-1] = ("\(firstNumber / secondNumber)")
+                    // We do. We calculate it then..And put the result number on index-1
+                    if let firstNumber = Float(tempNumbersArray[inc-1]) {
+                        if let secondNumber = Float(tempNumbersArray[inc]) {
+                            if operatorString == "*" {
+                                tempNumbersArray[inc-1] = ("\(firstNumber * secondNumber)")
+                     } else if operatorString == "/" {
+                                tempNumbersArray[inc-1] = ("\(firstNumber / secondNumber)")
                     }
                 }
-                tempNumbersArray.remove(at: inc)
-                tempOperatorsArray.remove(at: inc)
-                break
+                       // Everything is calculate. We can remove the index number and operation
+                       tempNumbersArray.remove(at: inc)
+                       tempOperatorsArray.remove(at: inc)
+                       // We need to exit the for loop or we will have an out of range error
+                       break
+                       }
                 }
             }
-            }
         }
+        // Returning the results
         return[tempNumbersArray, tempOperatorsArray]
     }
 
+    // This function check if there is a * or a / on the operatorArray
     private func priorPresence(operatorArray: [String]) -> Bool {
         for operatorString in operatorArray where operatorString == "*" || operatorString == "/" {
             return true
@@ -88,6 +88,7 @@ class Calculator {
         return false
     }
 
+    // This function convert a float to string. If there is no decimal number, it is transformed into an Integer
     private func convertToString(toConvert: Float) -> String {
         if toConvert.truncatingRemainder(dividingBy: 1.0 ) == 0 {
             let int = Int(toConvert)
@@ -98,6 +99,7 @@ class Calculator {
 
     // MARK: Public Methods
 
+    // Clear all arrays
     func clear() {
         stringNumbers = [String()]
         operators = ["+"]
@@ -125,6 +127,7 @@ class Calculator {
     func addNumber(newNumber: Int) {
         if let stringNumber = stringNumbers.last {
             var stringNumberMutable = stringNumber
+            // If the number is 10, we have a coma! We add it to the array
             if newNumber == 10 {
                 if stringNumberMutable == "" {
                        stringNumberMutable += "0."

@@ -18,61 +18,84 @@ class CalculatorTest: XCTestCase {
         super.setUp()
     }
 
-    func testGivenLastNumberOfArrayIsEmptyWhenAddingOperator_addOperatorShouldReturnFalse() {
-        let boolResult = calculator.addOperator(operatorToAdd: "-")
-        XCTAssertFalse(boolResult)
+    func addNumbers(numbersToSend: [Int]) {
+        for number in numbersToSend {
+            calculator.addNumber(newNumber: number)
+        }
     }
 
-    func testGivenNoNumbers_ValidityExpressionShouldBeNeedNewCalcul() {
-        XCTAssertEqual(calculator.isExpressionCorrect, .newCalculNeeded )
+    func testGiveOneOperatorInArrayWhenAddingOperator_addOperatorShouldReturnFalse() {
+        let firstResult = calculator.addOperator(operatorToAdd: "+")
+        let secondResult = calculator.addOperator(operatorToAdd: "*")
+        XCTAssert(firstResult)
+        XCTAssertFalse(secondResult)
+    }
+
+    func testGivenNoNumbers_ValidityExpressionShouldBeFalse() {
+        XCTAssertFalse(calculator.isExpressionCorrect )
     }
 
     func testGivenNumberAndOperator_ValidityExpressionShouldBeIncorrect() {
-        calculator.addNumber(newNumber: 9)
+        addNumbers(numbersToSend: [9])
         _ = calculator.addOperator(operatorToAdd: "+")
-        XCTAssertEqual(calculator.isExpressionCorrect, .incorrect)
+        XCTAssertFalse(calculator.isExpressionCorrect)
     }
 
-    func testGivenExpression_WhenCallingCalculateResult_CheckResultValidityAndCurrentStateMustBeCleaned() {
-        // Testing 9 + 56. Result Should be 65
-        calculator.addNumber(newNumber: 9)
-        _ = calculator.addOperator(operatorToAdd: "+")
-        calculator.addNumber(newNumber: 5)
-        calculator.addNumber(newNumber: 6)
-        XCTAssertEqual(calculator.isExpressionCorrect, .correct)
-        var expressionResult = calculator.calculateTotal()
-        XCTAssertEqual(expressionResult, "65" )
-
-        // Testing 7 - 1 + 5. Result Should be 11
-        calculator.addNumber(newNumber: 7)
+    func testGivenSevenMinusOnePlusFive_ResultShouldBeElevenAndCurrentStateShouldBeEmpty() {
+        addNumbers(numbersToSend: [7])
         _ = calculator.addOperator(operatorToAdd: "-")
-        calculator.addNumber(newNumber: 1)
-        XCTAssertEqual(calculator.isExpressionCorrect, .correct)
+        addNumbers(numbersToSend: [1])
         _ = calculator.addOperator(operatorToAdd: "+")
-        calculator.addNumber(newNumber: 5)
+        addNumbers(numbersToSend: [5])
         // Testing the current State for display
         XCTAssertEqual(calculator.getCurrentState(), "7-1+5")
-        expressionResult = calculator.calculateTotal()
+        // Testing if expression is correct send the good result
+        XCTAssert(calculator.isExpressionCorrect)
+        // Calculate the result
+        let expressionResult = calculator.calculateTotal()
         XCTAssertEqual(expressionResult, "11")
         // Testing the current State for display
         XCTAssertEqual(calculator.getCurrentState(), "")
     }
 
-    func testGivenFiveMultiplateFive_WhenCallingCalculateResult_ResultShouldBeTwentyFive() {
-        calculator.addNumber(newNumber: 5)
+    func testGivenFiveTimesFive_WhenCallingCalculateResult_ResultShouldBeTwentyFive() {
+        addNumbers(numbersToSend: [5])
         _ = calculator.addOperator(operatorToAdd: "*")
-        calculator.addNumber(newNumber: 5)
+        addNumbers(numbersToSend: [5])
         let expressionResult = calculator.calculateTotal()
         XCTAssertEqual(expressionResult, "25")
     }
 
-    func testGivenFivePlusTenMultiplateFive_WhenCallingCalculateResult_MultiplicationShouldBePrior() {
-        calculator.addNumber(newNumber: 5)
+    func testGivenFivePlusTenTimesFive_WhenCallingCalculateResult_ResultShouldBeFiftyFive() {
+        addNumbers(numbersToSend: [5])
         _ = calculator.addOperator(operatorToAdd: "+")
-        calculator.addNumber(newNumber: 10)
+        addNumbers(numbersToSend: [1, 0])
         _ = calculator.addOperator(operatorToAdd: "*")
-        calculator.addNumber(newNumber: 5)
+        addNumbers(numbersToSend: [5])
         let expressionResult = calculator.calculateTotal()
         XCTAssertEqual(expressionResult, "55")
+    }
+
+    func testGivenFiftyDividedByFive_WhenCallingCalculateResult_ResultShouldBeTen() {
+        addNumbers(numbersToSend: [5, 0])
+        _ = calculator.addOperator(operatorToAdd: "/")
+        addNumbers(numbersToSend: [5])
+        let expressionResult = calculator.calculateTotal()
+        XCTAssertEqual(expressionResult, "10")
+    }
+
+    func testGivenNumberOnOperation_CurrentStateShouldSendFloatOrIntGivenContect() {
+        // Warning: 10 is a coma!
+        addNumbers(numbersToSend: [7, 10, 4])
+        _ = calculator.addOperator(operatorToAdd: "+")
+        addNumbers(numbersToSend: [2])
+        XCTAssertEqual(calculator.getCurrentState(), "7.4+2")
+        let expressionResult = calculator.calculateTotal()
+        XCTAssertEqual(expressionResult, "9.4")
+    }
+
+    func testGivenWeAddAComaWhitoutNumber_NumberIsZeroPointX() {
+        addNumbers(numbersToSend: [10, 2])
+        XCTAssertEqual(calculator.getCurrentState(), "0.2")
     }
 }

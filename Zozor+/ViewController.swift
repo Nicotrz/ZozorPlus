@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITextViewDelegate {
+class ViewController: UIViewController {
 
     // MARK: - Model
     let calculator  = Calculator()
@@ -21,6 +21,7 @@ class ViewController: UIViewController, UITextViewDelegate {
 
     // Called when one of the number is tapped.
     // Take the tag to know witch number
+    // Note: Number 10 is take as a coma
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         calculator.addNumber(newNumber: sender.tag)
             updateDisplay()
@@ -34,6 +35,8 @@ class ViewController: UIViewController, UITextViewDelegate {
     // Called when one the user tap an operator
     // Tag 0 is +
     // Tag 1 is -
+    // Tag 2 is *
+    // Tag 3 is /
     // If addOperator sens back false, the operation cannot be done
     @IBAction func pushOperator(sender: UIButton) {
         var operatorToAdd: String
@@ -58,20 +61,17 @@ class ViewController: UIViewController, UITextViewDelegate {
     // If it is, we calculate the result and put it on textView
     // Else, we display an error message
     @IBAction func equal() {
-        switch calculator.isExpressionCorrect {
-        case .correct:
+        if calculator.isExpressionCorrect {
             let resultCalculation = calculator.calculateTotal()
                 textView.text = (textView.text + "=\(resultCalculation)")
-        case .incorrect:
-            showAlert(message: "SYNTAX ERROR!")
-        case .newCalculNeeded:
+        } else {
             showAlert(message: "SYNTAX ERROR!")
         }
     }
 
     // MARK: - Methods
 
-    // Function to display a message alert with the title title
+    // Function to display a Syntax Error Alert
     func showAlert(message: String) {
         let tempText = textView.text
         textView.text = "ERR\n\(message)"
