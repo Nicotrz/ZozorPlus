@@ -23,8 +23,11 @@ class ViewController: UIViewController {
     // Take the tag to know witch number
     // Note: Number 10 is take as a coma
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        calculator.addNumber(newNumber: sender.tag)
+        if calculator.addNumber(newNumber: sender.tag) {
             updateDisplay()
+        } else {
+            showAlert(message: "SYNTAX ERROR")
+        }
     }
 
     @IBAction func tappedClearButton(_ sender: Any) {

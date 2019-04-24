@@ -20,7 +20,7 @@ class CalculatorTest: XCTestCase {
 
     func addNumbers(numbersToSend: [Int]) {
         for number in numbersToSend {
-            calculator.addNumber(newNumber: number)
+            _ = calculator.addNumber(newNumber: number)
         }
     }
 
@@ -97,5 +97,15 @@ class CalculatorTest: XCTestCase {
     func testGivenWeAddAComaWhitoutNumber_NumberIsZeroPointX() {
         addNumbers(numbersToSend: [10, 2])
         XCTAssertEqual(calculator.getCurrentState(), "0.2")
+    }
+
+    func testGivenADecimalNumber_WhenAddingAnotherDecimal_ThenCanAddNumberReturnFalse() {
+        addNumbers(numbersToSend: [5, 10, 2])
+        XCTAssertFalse(calculator.addNumber(newNumber: 10))
+    }
+
+    func testGivenAIntegerNumber_WhenAddingDecimal_ThenCanAddNumberReturnTrue() {
+        addNumbers(numbersToSend: [5, 0])
+        XCTAssert(calculator.addNumber(newNumber: 10))
     }
 }

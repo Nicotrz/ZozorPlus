@@ -88,9 +88,21 @@ class Calculator {
         return false
     }
 
+    // This function test if the number sended is a decimal or a integer
+    private func isThisADecimalFromString(numberToTest: String) -> Bool {
+        for character in numberToTest.enumerated() where character.element == "." {
+                return true
+        }
+        return false
+    }
+
+    private func isThisADecimalFromFloat(numberToTest: Float) -> Bool {
+        return !(numberToTest.truncatingRemainder(dividingBy: 1.0) == 0)
+    }
+
     // This function convert a float to string. If there is no decimal number, it is transformed into an Integer
     private func convertToString(toConvert: Float) -> String {
-        if toConvert.truncatingRemainder(dividingBy: 1.0 ) == 0 {
+        if !isThisADecimalFromFloat(numberToTest: toConvert) {
             let int = Int(toConvert)
             return ("\(int)")
         }
@@ -124,11 +136,14 @@ class Calculator {
     }
 
     // This function add a number to the array
-    func addNumber(newNumber: Int) {
+    func addNumber(newNumber: Int) -> Bool {
         if let stringNumber = stringNumbers.last {
             var stringNumberMutable = stringNumber
             // If the number is 10, we have a coma! We add it to the array
             if newNumber == 10 {
+                if isThisADecimalFromString(numberToTest: stringNumberMutable) {
+                    return false
+                }
                 if stringNumberMutable == "" {
                        stringNumberMutable += "0."
                 } else {
@@ -139,7 +154,7 @@ class Calculator {
             }
             stringNumbers[stringNumbers.count-1] = stringNumberMutable
         }
-
+        return true
     }
 
     // This function calculate the result and send it back as a String
