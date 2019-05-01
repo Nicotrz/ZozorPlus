@@ -23,10 +23,13 @@ class ViewController: UIViewController {
     // Take the tag to know witch number
     // Note: Number 10 is take as a coma
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        if calculator.addNumber(newNumber: sender.tag) {
+        switch calculator.addNumber(newNumber: sender.tag) {
+        case .valid:
             updateDisplay()
-        } else {
-            showAlert(message: "SYNTAX ERROR")
+        case .tooLarge:
+            showAlert(message: "Number too large")
+        case .twoComa:
+            showAlert(message: "One coma allowed")
         }
     }
 

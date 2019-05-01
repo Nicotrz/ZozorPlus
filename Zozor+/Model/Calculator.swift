@@ -10,6 +10,13 @@ import Foundation
 
 class Calculator {
 
+    // MARK: Enum
+    enum ErrorCase {
+        case valid
+        case tooLarge
+        case twoComa
+    }
+
     // MARK: Private Properties
 
     // StringNumbers contain the numbers to calculate
@@ -136,13 +143,16 @@ class Calculator {
     }
 
     // This function add a number to the array
-    func addNumber(newNumber: Int) -> Bool {
+    func addNumber(newNumber: Int) -> ErrorCase {
         if let stringNumber = stringNumbers.last {
+            if stringNumber.count == 7 {
+                return .tooLarge
+            }
             var stringNumberMutable = stringNumber
             // If the number is 10, we have a coma! We add it to the array
             if newNumber == 10 {
                 if isThisADecimalFromString(numberToTest: stringNumberMutable) {
-                    return false
+                    return .twoComa
                 }
                 if stringNumberMutable == "" {
                        stringNumberMutable += "0."
@@ -154,7 +164,7 @@ class Calculator {
             }
             stringNumbers[stringNumbers.count-1] = stringNumberMutable
         }
-        return true
+        return .valid
     }
 
     // This function calculate the result and send it back as a String

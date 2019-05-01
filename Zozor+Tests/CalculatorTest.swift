@@ -99,13 +99,18 @@ class CalculatorTest: XCTestCase {
         XCTAssertEqual(calculator.getCurrentState(), "0.2")
     }
 
-    func testGivenADecimalNumber_WhenAddingAnotherDecimal_ThenCanAddNumberReturnFalse() {
+    func testGivenADecimalNumber_WhenAddingAnotherDecimal_ThenCanAddNumberReturnTwoComa() {
         addNumbers(numbersToSend: [5, 10, 2])
-        XCTAssertFalse(calculator.addNumber(newNumber: 10))
+        XCTAssertEqual(calculator.addNumber(newNumber: 10), .twoComa )
     }
 
-    func testGivenAIntegerNumber_WhenAddingDecimal_ThenCanAddNumberReturnTrue() {
+    func testGivenAIntegerNumber_WhenAddingDecimal_ThenCanAddNumberReturnValid() {
         addNumbers(numbersToSend: [5, 0])
-        XCTAssert(calculator.addNumber(newNumber: 10))
+        XCTAssertEqual(calculator.addNumber(newNumber: 10), .valid )
+    }
+
+    func testGivenANumberWithSevenCharacter_WhanAddingANewOne_ThenCanAddNumberReturnTooLarge() {
+        addNumbers(numbersToSend: [9, 9, 9, 9, 9, 9, 9])
+        XCTAssertEqual(calculator.addNumber(newNumber: 9), .tooLarge )
     }
 }
