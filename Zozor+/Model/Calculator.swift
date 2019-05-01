@@ -145,6 +145,7 @@ class Calculator {
     // This function add a number to the array
     func addNumber(newNumber: Int) -> ErrorCase {
         if let stringNumber = stringNumbers.last {
+            // If the number is already seven characters large, we stop it to add a new one to prevent issues
             if stringNumber.count == 7 {
                 return .tooLarge
             }
