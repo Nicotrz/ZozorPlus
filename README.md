@@ -112,4 +112,29 @@ class ViewController: UIViewController {
     }
 ```
 
-        
+## Third step: Unit test writing
+
+The last step of the project was to make unit testing on the model. With the CalculatorTest, we have a code coverage on the model of 100%!
+
+Test example:
+```Swift
+    func testGivenSevenMinusOnePlusFive_ResultShouldBeElevenAndCurrentStateShouldBeEmpty() {
+        addNumbers(numbersToSend: [7])
+        _ = calculator.addOperator(operatorToAdd: "-")
+        addNumbers(numbersToSend: [1])
+        _ = calculator.addOperator(operatorToAdd: "+")
+        addNumbers(numbersToSend: [5])
+        // Testing the current State for display
+        XCTAssertEqual(calculator.getCurrentState(), "7-1+5")
+        // Testing if expression is correct send the good result
+        XCTAssert(calculator.isExpressionCorrect)
+        // Calculate the result
+        let expressionResult = calculator.calculateTotal()
+        XCTAssertEqual(expressionResult, "11")
+        // Testing the current State for display
+        XCTAssertEqual(calculator.getCurrentState(), "")
+    }
+```
+
+## Credits
+Nicolas Sommereijns - 2019
